@@ -92,6 +92,7 @@ class Q1Env:
 
         # names to indices
         self.motors_dof_idx = [self.robot.get_joint(name).dof_start for name in self.env_cfg["joint_names"]]
+        self.motors_dof_idx[0] = 6  # Fix the first index if it's 0 (should be 6 to account for floating base)
 
         # PD control parameters - using high gains for stable control
         # If kp/kd are None, use Genesis/URDF defaults (same as q1_visualize.py)
@@ -152,6 +153,8 @@ class Q1Env:
         self.commands[envs_idx, 2] = gs_rand_float(*self.command_cfg["ang_vel_range"], (len(envs_idx),), gs.device)
 
     def step(self, actions):
+        from genesis.utils.geom import transform_quat_by_quat
+        
         self.actions = torch.clip(actions, -self.env_cfg["clip_actions"], self.env_cfg["clip_actions"])
         exec_actions = self.last_actions if self.simulate_action_latency else self.actions
         target_dof_pos = exec_actions * self.env_cfg["action_scale"] + self.default_dof_pos
@@ -163,10 +166,17 @@ class Q1Env:
         self.base_pos[:] = self.robot.get_pos()
         self.base_quat[:] = self.robot.get_quat()
         
-        # Apply sensor coordinate correction if needed
+        # Compute euler angles from RAW quaternion (for termination checks)
+        # Don't apply sensor correction here - we want to know the actual physical orientation
+        self.base_euler = quat_to_xyz(
+            transform_quat_by_quat(torch.ones_like(self.base_quat) * self.inv_base_init_quat, self.base_quat),
+            rpy=True,
+            degrees=True,
+        )
+        
+        # Apply sensor coordinate correction for IMU/velocity readings
         if self.sensor_correction_quat is not None:
             # Correct the quaternion by applying sensor rotation
-            from genesis.utils.geom import transform_quat_by_quat
             corrected_quat = transform_quat_by_quat(
                 self.base_quat,
                 self.sensor_correction_quat.unsqueeze(0).expand(self.num_envs, -1)
@@ -174,11 +184,7 @@ class Q1Env:
         else:
             corrected_quat = self.base_quat
         
-        self.base_euler = quat_to_xyz(
-            transform_quat_by_quat(torch.ones_like(corrected_quat) * self.inv_base_init_quat, corrected_quat),
-            rpy=True,
-            degrees=True,
-        )
+        # Use corrected quaternion for velocity transformations and projected gravity
         inv_base_quat = inv_quat(corrected_quat)
         self.base_lin_vel[:] = transform_by_quat(self.robot.get_vel(), inv_base_quat)
         self.base_ang_vel[:] = transform_by_quat(self.robot.get_ang(), inv_base_quat)
@@ -219,7 +225,7 @@ class Q1Env:
                 self.projected_gravity,  # 3
                 self.commands * self.commands_scale,  # 3
                 (self.dof_pos - self.default_dof_pos) * self.obs_scales["dof_pos"],  # 8
-                self.dof_vel * self.obs_scales["dof_vel"],  # 8
+                # self.dof_vel * self.obs_scales["dof_vel"],  # 8
                 self.actions,  # 8
             ],
             axis=-1,

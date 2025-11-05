@@ -5,6 +5,7 @@ This helps verify the robot loads correctly before training.
 
 import genesis as gs
 import numpy as np
+import time
 
 def main():
     # Initialize Genesis
@@ -29,21 +30,21 @@ def main():
     # Apply 90-degree rotation around X-axis to correct orientation
     # quat format: (w, x, y, z) - this rotates the entire robot, not just visuals
     import math
-    # robot = scene.add_entity(
-    #     gs.morphs.MJCF(
-    #         file="xml/q1/q1_mjx_full.xml",
-    #         pos=(0, 0, 0.65),
-    #         quat=(math.cos(math.pi/4), -math.sin(math.pi/4), 0, 0),  # 90° around X-axis
-    #     ),
-    # )
-
     robot = scene.add_entity(
-        gs.morphs.URDF(
-            file="urdf/q1/kutta.urdf",
+        gs.morphs.MJCF(
+            file="xml/q1/q1_mjx_full.xml",
             pos=(0, 0, 0.5),
-            quat=(math.cos(math.pi/4), -math.sin(math.pi/4), 0, 0),
+            quat=(math.cos(math.pi/4), -math.sin(math.pi/4), 0, 0),  # 90° around X-axis
         ),
     )
+
+    # robot = scene.add_entity(
+    #     gs.morphs.URDF(
+    #         file="urdf/q1/kutta.urdf",
+    #         pos=(0, 0, 0.5),
+    #         quat=(math.cos(math.pi/4), -math.sin(math.pi/4), 0, 0),
+    #     ),
+    # )
     
     # Build scene
     scene.build()
@@ -104,7 +105,13 @@ def main():
             print(f"  {name:20s} - ERROR: {e}")
     
     # Set default pose
+    # Get DOF indices - for MuJoCo models with floating base, need to add 6
+    # The floating base has 6 DOFs (3 position + 3 orientation)
     motors_dof_idx = [robot.get_joint(name).dof_start for name in joint_names]
+    # Fix the first index if it's 0 (should be 6 to account for floating base)
+    if motors_dof_idx[0] == 0:
+        motors_dof_idx[0] = 6
+    print(motors_dof_idx)
     default_dof_pos = [default_positions[name] for name in joint_names]
     
     robot.set_dofs_position(

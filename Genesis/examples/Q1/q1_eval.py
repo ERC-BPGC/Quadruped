@@ -2,6 +2,7 @@ import argparse
 import os
 import pickle
 from importlib import metadata
+import csv
 
 import torch
 
@@ -24,7 +25,7 @@ from q1_env import Q1Env
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-e", "--exp_name", type=str, default="q1-walking")
-    parser.add_argument("--ckpt", type=int, default=100)
+    parser.add_argument("--ckpt", type=int, default=200)
     args = parser.parse_args()
 
     gs.init()
@@ -47,11 +48,28 @@ def main():
     runner.load(resume_path)
     policy = runner.get_inference_policy(device=gs.device)
 
+    data = []
+    iter = 0
+
     obs, _ = env.reset()
     with torch.no_grad():
         while True:
             actions = policy(obs)
+            # print(actions)
+            
+            act = torch.clip(actions, -env_cfg["clip_actions"], env_cfg["clip_actions"])
+            target_dof_pos = act * env_cfg["action_scale"] + [env_cfg["default_joint_angles"][name] for name in env_cfg["joint_names"]]
+
+            # print("Data", data, len(data))
+
+            if iter == 250:
+                with open(f"q1_eval_actions_{args.ckpt}.csv", "w", newline="") as f:
+                    writer = csv.writer(f)
+                    writer.writerows(data)
+
             obs, rews, dones, infos = env.step(actions)
+            iter += 1
+            
 
 
 if __name__ == "__main__":

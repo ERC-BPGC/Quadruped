@@ -10,13 +10,13 @@
       <!-- This globally disables collisions for all parts except feet -->
       <geom condim="3" contype="0" conaffinity="0"/>
       <joint axis="0 0 1" armature="0.005" damping="0.5"/>
-      <position forcerange="-23.7 23.7" inheritrange="1" kp="35"/>
+      <position forcerange="-1500 1500" inheritrange="1" kp="1000"/>
       <default class="thigh">
         <joint range="-0.9 0.67" frictionloss="0.3"/>
       </default>
       <default class="calf">
         <joint range="-0.5 0.5" frictionloss="1.0"/>
-        <position forcerange="-35.55 35.55"/>
+        <position forcerange="-1500 1500"/>
       </default>
       <default class="visual">
         <geom type="mesh" contype="0" conaffinity="0" group="2" material="dark"/>
@@ -28,13 +28,13 @@
           <geom size="0.15 0.08 0.05" type="box" contype="0" conaffinity="0"/>
         </default>
         <default class="thigh_col_right">
-          <geom size="0.02" fromto="0 0 0.055 0 0.245 0.055" type="capsule" contype="0" conaffinity="0" />
+          <geom size="0.02" fromto="0 0 0.055 0 0.245 0.055" type="capsule" contype="1" conaffinity="1" />
         </default>
         <default class="thigh_col_left">
-          <geom size="0.02" fromto="0 0 -0.055 0 0.245 -0.055" type="capsule" contype="0" conaffinity="0" />
+          <geom size="0.02" fromto="0 0 -0.055 0 0.245 -0.055" type="capsule" contype="1" conaffinity="1" />
         </default>
         <default class="calf_col">
-          <geom size="0.015" fromto="0 0 0 0 -0.065 0.33" type="capsule" contype="0" conaffinity="0" />
+          <geom size="0.015" fromto="0 0 0 0 -0.065 0.33" type="capsule" contype="1" conaffinity="1" />
         </default>
         <default class="foot">
           <!--
@@ -42,7 +42,7 @@
           The floor is contype=1, conaffinity=1 so the feet can collide with the floor.
           group="0" makes them visible, rgba makes them bright orange
           -->
-          <geom type="sphere" size="0.025" pos="0 -0.065 0.35" solimp="0.9 0.95 0.001" solref="0.004 1" contype="1" conaffinity="1" condim="3" friction="2.0 0.1 0.01" rgba="1 0.5 0 1" group="0"/>
+          <geom type="sphere" size="0.025" pos="0 -0.065 0.35" solimp="0.9 0.95 0.001" solref="0.004 1" contype="1" conaffinity="1" condim="3" friction="2.5 0.1 0.01" rgba="1 0.5 0 1" group="0"/>
         </default>
       </default>
     </default>
@@ -77,13 +77,13 @@
       <site name="imu" pos="0 0 0" group="5"/>
       
       <!-- Front Left Leg -->
-      <body name="FL_thigh" pos="0.211553 0.09 -0.179" quat="0.634822 -0.31145 -0.634822 0.31145">
-        <inertial pos="-0.000817907 0.0310806 -0.0509014" quat="0.393902 0.389492 -0.600379 0.576786" mass="1.55" diaginertia="0.00261662 0.00260068 0.00123196"/>
+      <body name="FL_thigh" pos="0.21 0.09 -0.18" quat="0.63 -0.31 -0.63 0.31"> <!--quat="0.525 -0.425 -0.525 0.425"> -->
+        <inertial pos="-0.0008 0.03 -0.05" quat="0.4 0.4 -0.6 0.6" mass="1.55" diaginertia="0.00262 0.00260 0.00123"/>
         <joint class="thigh" name="FL_thigh_joint"/>
         <geom class="visual" mesh="left_thigh" material="light" />
         <geom class="thigh_col_left"/>
         <body name="FL_calf" pos="0 0.245452 -0.0544472" quat="0.707107 0 0.707107 0">
-          <inertial pos="-1.51413e-09 -0.0322977 0.16607" quat="0.703848 0.0678076 -0.0678076 0.703848" mass="0.25" diaginertia="0.000849475 0.000848789 1.70367e-05"/>
+          <inertial pos="0.0 -0.033 0.166" quat="0.704 0.068 -0.068 0.704" mass="0.25" diaginertia="0.00085 0.00085 0.000017"/>
           <joint class="calf" name="FL_calf_joint" axis="-1 0 0"/>
           <geom class="visual" mesh="left_calf" material="blue" />
           <geom class="calf_col"/>
@@ -93,13 +93,13 @@
       </body>
       
       <!-- Front Right Leg -->
-      <body name="FR_thigh" pos="-0.211553 0.09 -0.179" quat="0.635676 -0.309703 -0.635676 0.309703">
-        <inertial pos="0.000777694 0.0310806 0.050662" quat="0.378108 0.389847 -0.582841 0.604442" mass="1.55" diaginertia="0.0026164 0.00260097 0.00123189"/>
+      <body name="FR_thigh" pos="-0.21 0.09 -0.18" quat="0.63 -0.31 -0.63 0.31">
+        <inertial pos="-0.0008 0.03 -0.05" quat="0.4 0.4 -0.6 0.6" mass="1.55" diaginertia="0.00262 0.00260 0.00123"/>
         <joint class="thigh" name="FR_thigh_joint"/>
         <geom class="visual" mesh="right_thigh" material="light" />
         <geom class="thigh_col_right"/>
         <body name="FR_calf" pos="0 0.245452 0.0544472" quat="0.707107 0 0.707107 0">
-          <inertial pos="-1.51412e-09 -0.0322977 0.16607" quat="0.703848 0.0678076 -0.0678076 0.703848" mass="0.25" diaginertia="0.000849475 0.000848789 1.70367e-05"/>
+          <inertial pos="0.0 -0.033 0.166" quat="0.704 0.068 -0.068 0.704" mass="0.25" diaginertia="0.00085 0.00085 0.000017"/>
           <joint class="calf" name="FR_calf_joint" axis="-1 0 0"/>
           <geom class="visual" mesh="right_calf" material="blue" />
           <geom class="calf_col"/>
@@ -109,13 +109,13 @@
       </body>
       
       <!-- Rear Left Leg -->
-      <body name="RL_thigh" pos="0.211553 0.09 0.179" quat="0.638021 -0.304842 -0.638021 0.304842">
-        <inertial pos="-0.000817907 0.0310806 -0.0509014" quat="0.393902 0.389492 -0.600379 0.576786" mass="1.55" diaginertia="0.00261662 0.00260068 0.00123196"/>
+      <body name="RL_thigh" pos="0.21 0.09 0.18" quat="0.63 -0.31 -0.63 0.31">
+        <inertial pos="-0.0008 0.03 -0.05" quat="0.4 0.4 -0.6 0.6" mass="1.55" diaginertia="0.00262 0.00260 0.00123"/>
         <joint class="thigh" name="RL_thigh_joint"/>
         <geom class="visual" mesh="left_thigh" material="light" />
         <geom class="thigh_col_left"/>
         <body name="RL_calf" pos="0 0.245452 -0.0544472" quat="0.707107 0 0.707107 0">
-          <inertial pos="-1.51413e-09 -0.0322977 0.16607" quat="0.703848 0.0678076 -0.0678076 0.703848" mass="0.25" diaginertia="0.000849475 0.000848789 1.70367e-05"/>
+          <inertial pos="0.0 -0.033 0.166" quat="0.704 0.068 -0.068 0.704" mass="0.25" diaginertia="0.00085 0.00085 0.000017"/>
           <joint class="calf" name="RL_calf_joint" axis="-1 0 0"/>
           <geom class="visual" mesh="left_calf" material="blue" />
           <geom class="calf_col"/>
@@ -125,13 +125,13 @@
       </body>
       
       <!-- Rear Right Leg -->
-      <body name="RR_thigh" pos="-0.211553 0.09 0.179" quat="0.637893 -0.305111 -0.637893 0.305111">
-        <inertial pos="0.000777694 0.0310806 0.050662" quat="0.378108 0.389847 -0.582841 0.604442" mass="1.55" diaginertia="0.0026164 0.00260097 0.00123189"/>
+      <body name="RR_thigh" pos="-0.21 0.09 0.18" quat="0.63 -0.31 -0.63 0.31">
+        <inertial pos="-0.0008 0.03 -0.05" quat="0.4 0.4 -0.6 0.6" mass="1.55" diaginertia="0.00262 0.00260 0.00123"/>
         <joint class="thigh" name="RR_thigh_joint"/>
         <geom class="visual" mesh="right_thigh" material="light" />
         <geom class="thigh_col_right"/>
         <body name="RR_calf" pos="-0 0.245452 0.0544472" quat="0.707107 0 0.707107 0">
-          <inertial pos="1.51412e-09 -0.0322977 -0.16607" quat="0.703848 -0.0678076 0.0678076 0.703848" mass="0.25" diaginertia="0.000849475 0.000848789 1.70367e-05"/>
+          <inertial pos="0.0 -0.033 -0.166" quat="0.704 -0.068 0.068 0.704" mass="0.25" diaginertia="0.00085 0.00085 0.000017"/>
           <joint class="calf" name="RR_calf_joint" axis="-1 0 0"/>
           <geom class="visual" mesh="right_calf" material="blue" />
           <geom class="calf_col"/>
@@ -143,14 +143,14 @@
   </worldbody>
 
   <actuator>
-    <position class="thigh" name="FL_thigh" joint="FL_thigh_joint" gear="1" kp="15" kv="1"/>
-    <position class="calf" name="FL_calf" joint="FL_calf_joint" gear="1" kp="30" kv="1"/>
-    <position class="thigh" name="FR_thigh" joint="FR_thigh_joint" gear="1" kp="15" kv="1"/>
-    <position class="calf" name="FR_calf" joint="FR_calf_joint" gear="1" kp="30" kv="1"/>
-    <position class="thigh" name="RL_thigh" joint="RL_thigh_joint" gear="1" kp="15" kv="1"/>
-    <position class="calf" name="RL_calf" joint="RL_calf_joint" gear="1" kp="30" kv="1"/>
-    <position class="thigh" name="RR_thigh" joint="RR_thigh_joint" gear="1" kp="15" kv="1"/>
-    <position class="calf" name="RR_calf" joint="RR_calf_joint" gear="1" kp="30" kv="1"/>
+    <position class="thigh" name="FL_thigh" joint="FL_thigh_joint" gear="10" kp="200" kv="1"/>
+    <position class="calf" name="FL_calf" joint="FL_calf_joint" gear="10" kp="200" kv="1"/>
+    <position class="thigh" name="FR_thigh" joint="FR_thigh_joint" gear="10" kp="200" kv="1"/>
+    <position class="calf" name="FR_calf" joint="FR_calf_joint" gear="10" kp="200" kv="1"/>
+    <position class="thigh" name="RL_thigh" joint="RL_thigh_joint" gear="10" kp="200" kv="1"/>
+    <position class="calf" name="RL_calf" joint="RL_calf_joint" gear="10" kp="200" kv="1"/>
+    <position class="thigh" name="RR_thigh" joint="RR_thigh_joint" gear="10" kp="200" kv="1"/>
+    <position class="calf" name="RR_calf" joint="RR_calf_joint" gear="10" kp="200" kv="1"/>
   </actuator>
 
   <sensor>

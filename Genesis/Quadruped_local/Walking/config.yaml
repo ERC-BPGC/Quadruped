@@ -1,0 +1,154 @@
+# Quadruped Configuration File
+# This file contains all ODrive and system parameters that can be easily modified
+
+# System Settings
+system:
+  simulation_mode: false  # Set to true to run without ODrive connection
+  default_calibration_mode: "simultaneous"  # "simultaneous" or "sequential"
+  
+# ODrive Serial to Leg Mapping
+odrive_mapping:
+  "3670314C3333": "front_left"
+  "366B315F3333": "front_right" 
+  "3669315C3333": "back_left"                      
+  "367031553333": "back_right"
+
+# Leg Configuration
+leg_config:
+  L1: 25.0  # Upper leg length (hip to knee) in cm
+  L2: 33.0  # Lower leg length (knee to foot) in cm
+  
+  # Encoder settings
+  hip_pole_pairs: 20
+  knee_pole_pairs: 7
+  hip_encoder_cpr: 2400
+  knee_encoder_cpr: 42
+
+# ODrive Hardware Configuration
+odrive_config:
+  brake_resistance: 0.5
+  dc_max_positive_current: 70
+  dc_max_negative_current: -2.0
+  max_regen_current: 0
+
+# Motor Configurations
+motor_config:
+  hip:
+    motor_type: "HIGH_CURRENT"
+    resistance_calib_max_voltage: 10
+    calibration_current: 18
+    current_lim: 20.0
+    requested_current_range: 22.0
+    calibration_lockin_current: 20
+    encoder_bandwidth: 750
+    encoder_mode: "INCREMENTAL"
+    
+    # Control parameters
+    control_mode: "POSITION_CONTROL"
+    input_mode: "TRAP_TRAJ"
+    pos_gain: 50.0
+    vel_gain: 0.05
+    vel_integrator_gain: 0.0
+    vel_limit: 10.0
+    
+    # Trajectory parameters
+    trap_traj_vel_limit: 10
+    trap_traj_accel_limit: 15
+    trap_traj_decel_limit: 15
+
+  knee:
+    motor_type: "HIGH_CURRENT"
+    resistance_calib_max_voltage: 12
+    calibration_current: 22
+    current_lim: 60.0
+    requested_current_range: 70.0
+    calibration_lockin_current: 33
+    encoder_bandwidth: 100
+    encoder_mode: "HALL"
+    current_control_bandwidth: 1500  # Increase current loop bandwidth
+    
+    # Control parameters
+    control_mode: "POSITION_CONTROL"
+    input_mode: "TRAP_TRAJ"
+    pos_gain: 25
+    vel_gain: 0.05 # Increased from 0.0125 for better tracking
+    vel_integrator_gain: 0.0  # Added some integral gain to reduce steady-state error
+    vel_limit: 50.0
+    vel_limit_tolerance: 1.2  # Allow some velocity overshoot
+    enable_vel_limit: true
+    torque_ramp_rate: 0.01  # Limit torque change rate
+    
+    # Trajectory parameters - made less aggressive
+    trap_traj_vel_limit: 50  # Reduced from 30
+    trap_traj_accel_limit: 100  # Reduced from 50
+    trap_traj_decel_limit: 100  # Reduced from 50
+
+# Leg-specific overrides (optional)
+leg_specific:
+  front_right:
+    is_mirrored: true
+    # knee_encoder_cpr: 28  # Uncomment if needed
+  front_left:
+    is_mirrored: false
+  back_left:
+    is_mirrored: false
+  back_right:
+    is_mirrored: true
+    # knee_encoder_cpr: 28  # Uncomment if needed
+
+# GUI Settings
+gui:
+  window_title: "Quadruped Control Interface"
+  window_size: [1600, 1000]  # Increased for single screen layout
+  update_rate_ms: 50  # GUI update rate in milliseconds
+  plot_history_length: 1000  # Number of data points to keep in plots
+  
+  # Theme configuration (ERC colors - dark theme)
+  theme:
+    background: "#1e1e1e"      # Dark grey background
+    surface: "#2d2d2d"         # Slightly lighter grey for panels
+    primary: "#0078d4"         # Blue (ERC blue)
+    secondary: "#ffffff"       # White text
+    accent: "#005a9e"          # Darker blue for accents
+    text_primary: "#ffffff"    # White text
+    text_secondary: "#cccccc"  # Light grey text
+    success: "#107c10"         # Green for success
+    warning: "#ff8c00"         # Orange for warnings
+    error: "#d13438"           # Red for errors
+
+# Visualization Settings
+visualization:
+  body_length: 42.0  # Distance between front and back legs
+  body_width: 35.8   # Distance between left and right legs
+  default_joint_angles:
+    hip: 0.0
+    knee: 0.0
+  animation_speed: 1.0
+  show_coordinate_frame: true
+
+# Joint Angle Limits (in degrees)
+joint_limits:
+  # Animation/visualization limits (for sliders and display)
+  animation:
+    hip:
+      min: -120
+      max: 120
+    knee:
+      min: -140
+      max: 140
+  
+  # Hardware safety limits (actual commands sent to motors)
+  hardware:
+    hip:
+      min: -90
+      max: 90
+    knee:
+      min: -120
+      max: 120
+  
+# Safety Limits
+safety:
+  max_current: 80.0
+  max_velocity: 25.0
+  max_position_error: 5.0
+  emergency_stop_enabled: true

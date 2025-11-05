@@ -57,6 +57,14 @@ robot = scene.add_entity(
     ),
 )
 
+# robot = scene.add_entity(
+#         gs.morphs.MJCF(
+#             file="xml/q1/q1_mjx_full.xml",
+#             pos=(0, 0, 0.5),
+#             quat=(0.7071, -0.7071, 0.0, 0.0),  # 90° around X-axis
+#         ),
+#     )
+
 # Build scene
 scene.build()
 
@@ -70,6 +78,9 @@ joint_names = [
 
 # Get DOF indices for motors using get_joint()
 motors_dof_idx = [robot.get_joint(name).dof_start for name in joint_names]
+# Fix the first index if it's 0 (should be 6 to account for floating base)
+if motors_dof_idx[0] == 0:
+    motors_dof_idx[0] = 6
 
 # NOTE: Not setting PD gains explicitly - using URDF/Genesis defaults
 # The visualize script works without setting gains, so we match that behavior

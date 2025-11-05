@@ -58,7 +58,7 @@ def get_train_cfg(exp_name, max_iterations):
         },
         "runner_class_name": "OnPolicyRunner",
         "num_steps_per_env": 24,
-        "save_interval": 20,
+        "save_interval": 100,
         "empirical_normalization": None,
         "seed": 1,
     }
@@ -90,25 +90,25 @@ def get_cfgs():
             "RR_thigh_joint",
             "RR_calf_joint",
         ],
-        # PD - set to None to use Genesis/URDF defaults (same as q1_visualize.py)
-        "kp": None,
-        "kd": None,
+        # PD - Using Go2's proven gains for better stability
+        "kp": 100.0,
+        "kd": 2.5,
         # termination
         "termination_if_roll_greater_than": 15,  # degree - slightly more tolerant
         "termination_if_pitch_greater_than": 15,
         # base pose
-        "base_init_pos": [0.0, 0.0, 0.5],  # Adjusted based on your robot's height
+        "base_init_pos": [0.0, 0.0, 0.55],  # Adjusted based on your robot's height
         "base_init_quat": [math.cos(math.pi/4), -math.sin(math.pi/4), 0, 0],  # Visual upright (0.707, -0.707, 0, 0)
         # Sensor coordinate correction - rotate sensor frame to get correct IMU readings
         "sensor_correction_quat": [math.cos(math.pi/4), math.sin(math.pi/4), 0, 0],  # +90° around X-axis
-        "episode_length_s": 10.0,
+        "episode_length_s": 20.0,
         "resampling_time_s": 4.0,
         "action_scale": 0.25,  # Slightly larger action scale for more movement range
         "simulate_action_latency": True,
-        "clip_actions": 20.0,
+        "clip_actions": 100.0,
     }
     obs_cfg = {
-        "num_obs": 33,  # 3 + 3 + 3 + 8 + 8 + 8 = 33 (instead of 45 for Go2)
+        "num_obs": 25,  # 3 + 3 + 3 + 8 + 8 + 8 = 33 (instead of 45 for Go2)
         "obs_scales": {
             "lin_vel": 2.0,
             "ang_vel": 0.25,
@@ -118,21 +118,21 @@ def get_cfgs():
     }
     reward_cfg = {
         "tracking_sigma": 0.25,
-        "base_height_target": 0.5,  # Adjusted for Q1's height
-        "feet_height_target": 0.075,
+        "base_height_target": 0.45,  # Target base height when standing (not spawn height!)
+        "feet_height_target": 0.125,
         "reward_scales": {
-            "tracking_lin_vel": 1.5,  # Emphasize forward movement
+            "tracking_lin_vel": 2.0,  # Emphasize forward movement
             "tracking_ang_vel": 0.5,
-            "lin_vel_z": -1.0,  # Penalize vertical movement
+            "lin_vel_z": -0.5,  # Penalize vertical movement
             "base_height": -50.0,
-            "action_rate": -0.005,  # Encourage smooth actions
-            "similar_to_default": -0.1,  # Encourage staying near default pose
+            "action_rate": -0.05,  # Encourage smooth actions
+            "similar_to_default": -0.2,  # Encourage staying near default pose
         },
     }
     command_cfg = {
         "num_commands": 3,
-        "lin_vel_x_range": [0.5, 0.5],  # Forward walking at 0.5 m/s
-        "lin_vel_y_range": [0, 0],  # No lateral movement
+        "lin_vel_x_range": [0, 0],  # Forward walking at 0.5 m/s
+        "lin_vel_y_range": [0.65, 0.65],  # No lateral movement
         "ang_vel_range": [0, 0],  # No turning
     }
 
@@ -144,7 +144,7 @@ def main():
     parser.add_argument("-e", "--exp_name", type=str, default="q1-walking")
     parser.add_argument("-v", "--vis", action="store_true", default=False)
     parser.add_argument("-B", "--num_envs", type=int, default=4096)
-    parser.add_argument("--max_iterations", type=int, default=101)
+    parser.add_argument("--max_iterations", type=int, default=201)
     args = parser.parse_args()
 
     gs.init(logging_level="warning")

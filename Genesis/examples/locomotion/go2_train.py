@@ -150,6 +150,7 @@ def main():
     parser.add_argument("-e", "--exp_name", type=str, default="go2-walking")
     parser.add_argument("-B", "--num_envs", type=int, default=4096)
     parser.add_argument("--max_iterations", type=int, default=101)
+    parser.add_argument("-v", "--vis", action="store_true", help="Visualize the first environment during training")
     args = parser.parse_args()
 
     gs.init(logging_level="warning")
@@ -168,7 +169,12 @@ def main():
     )
 
     env = Go2Env(
-        num_envs=args.num_envs, env_cfg=env_cfg, obs_cfg=obs_cfg, reward_cfg=reward_cfg, command_cfg=command_cfg
+        num_envs=args.num_envs, 
+        env_cfg=env_cfg, 
+        obs_cfg=obs_cfg, 
+        reward_cfg=reward_cfg, 
+        command_cfg=command_cfg,
+        show_viewer=args.vis
     )
 
     runner = OnPolicyRunner(env, train_cfg, log_dir, device=gs.device)

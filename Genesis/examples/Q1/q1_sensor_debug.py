@@ -141,11 +141,19 @@ def main():
     # Add Q1 robot
     # Try different orientations to find the correct one
     # Option 3: 90° rotation around Y-axis
+    # robot = scene.add_entity(
+    #     gs.morphs.URDF(
+    #         file="urdf/q1/kutta.urdf",
+    #         pos=(0, 0, 0.5),
+    #         quat=(math.cos(math.pi/4), -math.sin(math.pi/4), 0, 0),  # +90° around Y-axis
+    #     ),
+    # )
+
     robot = scene.add_entity(
-        gs.morphs.URDF(
-            file="urdf/q1/kutta.urdf",
+        gs.morphs.MJCF(
+            file="xml/q1/q1_mjx_full.xml",
             pos=(0, 0, 0.5),
-            quat=(math.cos(math.pi/4), -math.sin(math.pi/4), 0, 0),  # +90° around Y-axis
+            quat=(math.cos(math.pi/4), -math.sin(math.pi/4), 0, 0),  # 90° around X-axis
         ),
     )
     
