@@ -18,7 +18,7 @@ from rsl_rl.runners import OnPolicyRunner
 
 import genesis as gs
 
-from q1_env import Q1Env
+from q2_env import Q1Env
 
 def get_train_cfg(exp_name, max_iterations):
     train_cfg_dict = {
@@ -103,7 +103,7 @@ def get_cfgs():
         "sensor_correction_quat": [math.cos(math.pi/4), math.sin(math.pi/4), 0, 0],  # +90° around X-axis
         "episode_length_s": 20.0,
         "resampling_time_s": 4.0,
-        "action_scale": 0.25,  # Slightly larger action scale for more movement range
+        "action_scale": 0.35,  # INCREASED action scale for more range of motion during turns
         "simulate_action_latency": True,
         "clip_actions": 100.0,
     }
@@ -121,22 +121,22 @@ def get_cfgs():
         "base_height_target": 0.55,  # Target base height when standing (not spawn height!)
         "feet_height_target": 0.125,
         "reward_scales": {
-            "tracking_lin_vel": 4.0,  # Emphasize forward movement
-            "tracking_ang_vel": 1.5,
+            "tracking_lin_vel": 4.0,  # High emphasis - we want good diagonal walking
+            "tracking_ang_vel": 1.0,  # Low emphasis - small angular component for direction
             "lin_vel_z": -0.5,  # Penalize vertical movement
-            "base_height": -50.0,
-            "action_rate": -0.05,  # Encourage smooth actions
-            "similar_to_default": -0.2,  # Encourage staying near default pose
-            "upright": 5.0,
-            "tilt_penalty": -2.0,
-            "base_ang_vel": -0.2,
+            "base_height": -30.0,  # Moderate penalty - maintain reasonable height
+            "action_rate": -0.05,  # Encourage smooth actions for stable walking
+            "similar_to_default": -0.1,  # Allow some deviation for diagonal gait
+            "upright": 3.0,  # Keep upright for stable walking
+            "tilt_penalty": -1.0,  # Moderate penalty - some tilt is ok during walking
+            "base_ang_vel": -0.1,  # Small penalty on unwanted rotation
         },
     }
     command_cfg = {
         "num_commands": 3,
-        "lin_vel_x_range": [0, 0],  # Forward walking at 0.5 m/s
-        "lin_vel_y_range": [-0.65, -0.65],  # No lateral movement
-        "ang_vel_range": [0, 0],  # No turning
+        "lin_vel_x_range": [0.0, 0.0],  # No forward movement for pure turning
+        "lin_vel_y_range": [0.0, 0.0],  # No lateral movement
+        "ang_vel_range": [1.2, 1.2],  # INCREASED: More aggressive turn command (was 0.8)
     }
 
     return env_cfg, obs_cfg, reward_cfg, command_cfg
@@ -144,7 +144,7 @@ def get_cfgs():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--exp_name", type=str, default="q4-back_walking")
+    parser.add_argument("-e", "--exp_name", type=str, default="q2-turn-left_4")
     parser.add_argument("-v", "--vis", action="store_true", default=False)
     parser.add_argument("-B", "--num_envs", type=int, default=4096)
     parser.add_argument("--max_iterations", type=int, default=201)
@@ -183,12 +183,12 @@ if __name__ == "__main__":
     main()
 
 """
-# training without visualization
-python examples/Q1/q1_train.py
+# training to turn LEFT
+python examples/Q1/q1_train.py -e q1-turn-left
 
 # training with visualization (shows first environment only)
-python examples/Q1/q1_train.py -v
+python examples/Q1/q1_train.py -e q1-turn-left -v
 
 # training with fewer environments for debugging
-python examples/Q1/q1_train.py -v -B 8
+python examples/Q1/q1_train.py -e q1-turn-left -v -B 8
 """

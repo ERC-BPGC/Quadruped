@@ -3,6 +3,7 @@ import os
 import pickle
 from importlib import metadata
 import csv
+from datetime import datetime
 
 import torch
 
@@ -19,12 +20,13 @@ from rsl_rl.runners import OnPolicyRunner
 
 import genesis as gs
 
-from q1_env import Q1Env
+from q2_env import Q1Env
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--exp_name", type=str, default="q4-back_walking")
+    timestamp_str = datetime.now().strftime("%Y%m%d-%H%M%S")
+    parser.add_argument("-e", "--exp_name", type=str, default="q3-diagonal-left")
     parser.add_argument("--ckpt", type=int, default=200)
     args = parser.parse_args()
 
@@ -81,7 +83,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-"""
-# evaluation
-python examples/Q1/q1_eval.py -e q1-walking --ckpt 500
-"""
+
