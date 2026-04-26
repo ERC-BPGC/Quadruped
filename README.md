@@ -4,12 +4,14 @@ Official repository for the ERC-BPGC quadruped robotics project.
 
 This repo is being organized into a long-term handoff and documentation hub for the robot: CAD, electronics, software, controls, simulation, assembly notes, experiments, and future work.
 
+**Docs site:** https://erc-bpgc.github.io/Quadruped/
+
 ## Documentation
 
-The project documentation is built with Docusaurus and is intended to be hosted with GitHub Pages:
+The project documentation is built with Docusaurus and hosted with GitHub Pages:
 
 ```text
-https://ERC-BPGC.github.io/Quadruped/
+https://erc-bpgc.github.io/Quadruped/
 ```
 
 Local docs workflow:
