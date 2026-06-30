@@ -11,8 +11,10 @@ const sidebars = {
       items: [
         'mechanical/overview',
         'mechanical/actuation-survey',
-        'mechanical/gearboxes',
         'mechanical/joint-torque-sizing',
+        'mechanical/motors',
+        'mechanical/gearboxes',
+        'mechanical/our-robot',
       ],
     },
     {

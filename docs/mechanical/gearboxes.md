@@ -4,47 +4,113 @@ title: Gearboxes
 
 # Gearboxes
 
-Gearboxes sit between the motor and joint output. They trade motor speed for joint torque, and their design strongly affects backdrivability, impact tolerance, control bandwidth, efficiency, backlash, and cost.
-
-This page is a placeholder for the gearbox choices relevant to our quadruped.
-
-## Why gear reduction matters
-
-Most compact BLDC motors spin quickly and produce modest torque at the shaft. A reduction stage increases output torque:
+Gearboxes sit between the motor and joint output. They reduce speed and multiply torque:
 
 ```text
-output_torque = motor_torque * gear_ratio * efficiency
-output_speed  = motor_speed / gear_ratio
+output_torque = motor_torque * reduction_ratio * efficiency
+output_speed  = motor_speed / reduction_ratio
 ```
 
-A higher gear ratio makes torque easier to achieve, but it also increases reflected inertia and usually reduces backdrivability. For dynamic legs, this tradeoff matters because the robot must survive impacts and rapidly control contact forces.
+For quadrupeds, the gearbox choice affects torque density, backdrivability, impact tolerance, backlash, efficiency, cost, and how easy the joint is to control.
 
 ## Common gearbox types
 
-| Type | Strengths | Tradeoffs | Notes |
+| Type | Basic idea | Pros | Cons |
 | --- | --- | --- | --- |
-| Planetary gearbox | Compact, common, high torque density. | Backlash and reflected inertia increase with ratio. | Good general-purpose option if backdrivability is acceptable. |
-| Cycloidal drive | High shock tolerance and compact high reduction. | More complex, can have efficiency/backlash challenges. | Popular in rugged robotic joints. |
-| Harmonic drive | Very compact, high ratio, low backlash. | Expensive, less backdrivable, fatigue-sensitive flexspline. | Common in precision robotics, less ideal for low-cost impact-heavy legs. |
-| Belt reduction | Simple, quiet, efficient, helps move mass proximally. | Belt tensioning, packaging, skipped teeth, wear. | Useful for knee transmission and low-ratio reductions. |
-| Chain reduction | Robust and inexpensive. | Noisy, backlash, lubrication/wear, packaging. | Less common in compact quadruped legs. |
-| Direct / quasi-direct drive | Minimal reduction, high backdrivability. | Needs high-torque motor and high current. | Attractive for dynamic legged robots. |
+| Planetary | Sun gear drives planet gears inside a ring gear. | Compact, common, good torque density, easy to source. | Backlash depends on quality, high ratios reduce backdrivability, multiple stages add complexity. |
+| Cycloidal | Eccentric input drives a cycloidal disc against pins/rollers. | High reduction in small volume, good shock tolerance, strong torque capacity. | More complex geometry, can have vibration/ripple, precision manufacturing matters. |
+| Harmonic | Wave generator flexes a spline against a circular spline. | Very high reduction, compact, low backlash. | Expensive, less backdrivable, flexspline fatigue risk under shock loads. |
+| Worm | Screw-like worm drives a worm wheel. | Simple high reduction, compact right-angle drive, can be self-locking. | Low efficiency, heat generation, poor backdrivability, sliding wear. |
 
-## Notes for our actuator selection
+### Planetary gearbox
 
-For this project, the gearbox decision should be tied to:
+Planetary gearboxes are common in robotics because they package reduction compactly around the motor axis.
 
-- required joint torque from the torque sizing page,
-- desired joint speed,
-- motor torque constant and current limit,
-- backdrivability requirement,
-- available packaging volume,
-- expected impacts and falls,
-- cost and manufacturability.
+<div className="figure-grid figure-grid--two figure-grid--compact">
+  <figure>
+    <img src={require('./assets/gearboxes/planetary-gearbox.webp').default} alt="Planetary gearbox labeled with sun gear, planet gears, ring gear, and carrier" />
+    <figcaption>Planetary gearbox layout: sun gear, planet gears, ring gear, and carrier.</figcaption>
+  </figure>
+  <figure>
+    <img src={require('./assets/gearboxes/planetary_drive.gif').default} alt="Animated planetary gear motion" />
+    <figcaption>Planetary gear motion.</figcaption>
+  </figure>
+</div>
 
-## TODO
+### Cycloidal drive
 
-- Add the gearbox or transmission used in our current CAD.
-- Add ratio, efficiency assumption, backlash estimate, and torque rating.
-- Add motor-side and joint-side speed/torque calculations.
-- Compare candidate reductions against the joint torque sizing results.
+Cycloidal drives use an eccentric input to move a cycloidal disc against pins or rollers, producing a large reduction in a compact volume.
+
+<div className="figure-grid figure-grid--two figure-grid--compact">
+  <figure>
+    <img src={require('./assets/gearboxes/cycloidal-gearbox.jpg').default} alt="Exploded cycloidal drive with input shaft, eccentric bearing, cycloidal disk, ring gear, and output shaft" />
+    <figcaption>Cycloidal drive components: eccentric input, cycloidal disc, ring pins/rollers, and output pins.</figcaption>
+  </figure>
+  <figure>
+    <img src={require('./assets/gearboxes/cycloidal_drive.gif').default} alt="Animated cycloidal drive motion" />
+    <figcaption>Cycloidal drive motion.</figcaption>
+  </figure>
+</div>
+
+### Harmonic drive
+
+Harmonic drives use a wave generator to flex a spline into a circular spline, creating high reduction with very low backlash.
+
+<div className="figure-grid figure-grid--two figure-grid--compact">
+  <figure>
+    <img src={require('./assets/gearboxes/harmonic-gearbox.jpg').default} alt="Harmonic drive showing circular spline, flex spline, and wave generator" />
+    <figcaption>Harmonic drive components: circular spline, flex spline, and wave generator.</figcaption>
+  </figure>
+  <figure>
+    <img src={require('./assets/gearboxes/harmonic_drive.gif').default} alt="Animated harmonic drive motion" />
+    <figcaption>Harmonic drive motion.</figcaption>
+  </figure>
+</div>
+
+### Worm gearbox
+
+Worm gearboxes use a screw-like worm to drive a worm wheel. They can produce high reductions and may be self-locking, but the sliding contact makes efficiency and heat important concerns.
+
+<div className="figure-grid figure-grid--two figure-grid--compact">
+  <figure>
+    <img src={require('./assets/gearboxes/worm-gearbox.webp').default} alt="Cutaway worm gearbox showing worm and worm wheel" />
+    <figcaption>Worm gearbox layout with worm and worm wheel.</figcaption>
+  </figure>
+  <figure>
+    <img src={require('./assets/gearboxes/worm_drive.gif').default} alt="Animated worm gear motion" />
+    <figcaption>Worm gear motion.</figcaption>
+  </figure>
+</div>
+
+## Quadruped-specific tradeoff
+
+Dynamic quadrupeds usually benefit from joints that can feel and react to ground impacts. That is why many modern electric quadrupeds avoid very high reductions and instead use direct or quasi-direct-drive actuators, belts, or moderate-ratio gearboxes.
+
+Higher reduction helps torque, but it usually hurts:
+
+- backdrivability,
+- reflected inertia,
+- impact tolerance,
+- force-control bandwidth,
+- mechanical transparency.
+
+Lower reduction helps dynamic behavior, but demands a stronger motor and higher phase current.
+
+## References and tools
+
+### Planetary
+
+- [Planetary gears explained](https://youtu.be/Ho4AniHtgxM?si=m1kBRgKtOiZX1tb_)
+- [Planetary gearbox animation](https://youtu.be/9CDH4NMT_Pc?si=lIJQrVTVulQ4AMoQ)
+- [Gear Generator](https://geargenerator.com/beta/) for quick visual gear sketches.
+
+### Cycloidal
+
+- [Cycloidal disc design video](https://m.youtube.com/watch?v=guvatctnjww&pp=ygUcSG93IHRvIGRlc2lnbiBjeWNsb2lkYWwgZGlzaw%3D%3D)
+- [Cycloidal drive explanation](https://youtu.be/OsS9-FzKN6s?si=6UzUr6US2mjOdzF2)
+- [Cycloidal drive animation](https://youtu.be/eM-8IO_mNIM?si=bPmpjyQm1xUHWZJ3)
+- [Building a Cycloidal Drive with SOLIDWORKS](https://blog-assets.solidworks.com/uploads/sites/3/Building-a-Cycloidal-Drive-with-SOLIDWORKS.pdf)
+
+### Harmonic
+
+- [Harmonic drive explanation](https://youtu.be/IXmCze1GsGU?si=k866qfZEKOZKAqwM)

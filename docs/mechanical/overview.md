@@ -26,5 +26,7 @@ This page should become the mechanical source of truth: robot dimensions, CAD fi
 ## Current pages
 
 - [Actuation Survey](./actuation-survey.md): actuator families and leg transmission mechanisms used in quadrupeds.
-- [Gearboxes](./gearboxes.md): reduction mechanisms, tradeoffs, and selection notes for quadruped joints.
 - [Joint Torque Sizing](./joint-torque-sizing.md): static force-balance method for estimating required hip and knee torques.
+- [Motors](./motors.md): motor concepts and selection parameters after torque requirements are known.
+- [Gearboxes](./gearboxes.md): reduction mechanisms, tradeoffs, and selection notes for quadruped joints.
+- [Our Robot](./our-robot.md): the final actuator/transmission/mechanical choices for this robot.
