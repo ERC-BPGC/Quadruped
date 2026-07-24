@@ -1,5 +1,8 @@
 // @ts-check
 
+const math = require('remark-math').default;
+const katex = require('rehype-katex').default;
+
 const config = {
   title: 'ERC Quadruped',
   tagline: 'A research-oriented quadruped robotics platform by ERC-BPGC.',
@@ -38,6 +41,8 @@ const config = {
           sidebarPath: './sidebars.js',
           routeBasePath: 'docs',
           editUrl: 'https://github.com/ERC-BPGC/Quadruped/tree/main/',
+          remarkPlugins: [math],
+          rehypePlugins: [katex],
         },
         blog: {
           showReadingTime: true,
@@ -46,7 +51,10 @@ const config = {
           editUrl: 'https://github.com/ERC-BPGC/Quadruped/tree/main/',
         },
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: [
+            require.resolve('katex/dist/katex.min.css'),
+            './src/css/custom.css',
+          ],
         },
       }),
     ],
@@ -99,9 +107,14 @@ const config = {
             title: 'Subsystems',
             items: [
               { label: 'Mechanical', to: '/docs/mechanical/overview' },
-              { label: 'Electronics', to: '/docs/electronics/overview' },
-              { label: 'Software', to: '/docs/software/overview' },
-              { label: 'Controls', to: '/docs/controls/overview' },
+              {
+                label: 'Electronics and Control',
+                to: '/docs/electronics-control/overview',
+              },
+              {
+                label: 'Software and Simulation',
+                to: '/docs/software-simulation/code-map',
+              },
             ],
           },
           {

@@ -4,7 +4,7 @@ title: Mechanical Overview
 
 # Mechanical Overview
 
-This page should become the mechanical source of truth: robot dimensions, CAD files, link geometry, joint layout, fasteners, materials, manufacturing notes, and assembly order.
+This page should become the mechanical source of truth for our robot: dimensions, CAD files, link geometry, joint layout, fasteners, materials, manufacturing notes, and assembly order.
 
 ## Fill this first
 
@@ -25,8 +25,8 @@ This page should become the mechanical source of truth: robot dimensions, CAD fi
 
 ## Current pages
 
-- [Actuation Survey](./actuation-survey.md): actuator families and leg transmission mechanisms used in quadrupeds.
-- [Joint Torque Sizing](./joint-torque-sizing.md): static force-balance method for estimating required hip and knee torques.
-- [Motors](./motors.md): motor concepts and selection parameters after torque requirements are known.
-- [Gearboxes](./gearboxes.md): reduction mechanisms, tradeoffs, and selection notes for quadruped joints.
-- [Our Robot](./our-robot.md): the final actuator/transmission/mechanical choices for this robot.
+- [Torque Calculations](./torque-calculations.md): robot-specific torque numbers, MATLAB output, assumptions, and safety factor.
+- [Leg Design](./leg-design.md): actual leg architecture, geometry, joints, materials, and known mechanical issues.
+- [CAD and Fabrication](./cad-and-fabrication.md): CAD file map, exports, materials, and manufacturing notes.
+
+For general background, see the [Mechanical theory pages](../theory/mechanical/actuation-survey.md).
