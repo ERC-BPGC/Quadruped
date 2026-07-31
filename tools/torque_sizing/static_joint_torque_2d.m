@@ -1,7 +1,7 @@
 % Quadruped quasi-static joint torque sizing.
 %
 % This script follows the FBD derivation documented in:
-%   docs/mechanical/joint-torque-sizing.md
+%   docs/mechanical/torque-calculations.md
 %
 % Assumptions:
 %   - 2D sagittal-plane analysis
