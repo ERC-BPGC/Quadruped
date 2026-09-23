@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+"""
+Requirements file for the Quadruped Control GUI
+Install these packages using: pip install -r requirements.txt
+"""
+
+# Core GUI and plotting
+matplotlib>=3.5.0
+numpy>=1.21.0
+PyYAML>=6.0
+
+# Optional: For enhanced GUI (uncomment if you want to use PyQt instead of tkinter)
+# PyQt5>=5.15.0
+# pyqtgraph>=0.12.0
+
+# ODrive (install separately from ODrive Robotics)
+# odrive>=0.6.0
+
+# Optional: For advanced visualization
+# vtk>=9.0.0
+# mayavi>=4.7.0
+
+# Optional: For enhanced data analysis
+# pandas>=1.3.0
+# scipy>=1.7.0

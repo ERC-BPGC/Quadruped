@@ -8,7 +8,7 @@ import argparse
 import time
 from pathlib import Path
 
-def monitor_training(exp_name="q1-walking", refresh_interval=5):
+def monitor_training(exp_name, refresh_interval=5):
     """
     Monitor training progress by reading log files.
     
@@ -66,8 +66,8 @@ def monitor_training(exp_name="q1-walking", refresh_interval=5):
 
 def main():
     parser = argparse.ArgumentParser(description="Monitor Q1 training progress")
-    parser.add_argument("-e", "--exp_name", type=str, default="q1-walking",
-                        help="Experiment name to monitor")
+    parser.add_argument("-e", "--exp_name", type=str, required=True,
+                        help="Experiment name to monitor, e.g. forward_walk, turn, diagonal_walk")
     parser.add_argument("--interval", type=int, default=5,
                         help="Refresh interval in seconds")
     args = parser.parse_args()

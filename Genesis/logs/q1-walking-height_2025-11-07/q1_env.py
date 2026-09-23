@@ -61,7 +61,7 @@ class Q1Env:
         
         # Sensor coordinate correction - rotate sensor readings to correct frame
         # Robot spawns visually upright with quat (0.707, -0.707, 0, 0)
-        # But we apply +90Â° X rotation to sensor readings for correct IMU frame
+        # But we apply +90° X rotation to sensor readings for correct IMU frame
         if "sensor_correction_quat" in self.env_cfg:
             self.sensor_correction_quat = torch.tensor(
                 self.env_cfg["sensor_correction_quat"], device=gs.device

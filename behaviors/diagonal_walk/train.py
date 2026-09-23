@@ -2,8 +2,12 @@ import argparse
 import os
 import pickle
 import shutil
+import sys
+import pathlib
 from importlib import metadata
 import math
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2]))
 
 try:
     try:
@@ -18,7 +22,7 @@ from rsl_rl.runners import OnPolicyRunner
 
 import genesis as gs
 
-from q1_env import Q1Env
+from behaviors.env import Q1Env
 
 def get_train_cfg(exp_name, max_iterations):
     train_cfg_dict = {
@@ -103,12 +107,12 @@ def get_cfgs():
         "sensor_correction_quat": [math.cos(math.pi/4), math.sin(math.pi/4), 0, 0],  # +90° around X-axis
         "episode_length_s": 20.0,
         "resampling_time_s": 4.0,
-        "action_scale": 0.25,  # Slightly larger action scale for more movement range
+        "action_scale": 0.25,  # Standard action scale for stable diagonal walking
         "simulate_action_latency": True,
         "clip_actions": 100.0,
     }
     obs_cfg = {
-        "num_obs": 25,  # 3 + 3 + 3 + 8 + 8 + 8 = 33 (instead of 45 for Go2)
+        "num_obs": 25,  # ang_vel(3) + gravity(3) + commands(3) + dof_pos(8) + actions(8); dof_vel excluded (see behaviors/env.py step())
         "obs_scales": {
             "lin_vel": 2.0,
             "ang_vel": 0.25,
@@ -121,22 +125,24 @@ def get_cfgs():
         "base_height_target": 0.55,  # Target base height when standing (not spawn height!)
         "feet_height_target": 0.125,
         "reward_scales": {
-            "tracking_lin_vel": 4.0,  # Emphasize forward movement
-            "tracking_ang_vel": 1.5,
+            "tracking_lin_vel": 5.0,  # HIGH: Must keep moving forward
+            "tracking_ang_vel": 5.0,  # HIGH: Must turn while moving (curved path)
             "lin_vel_z": -0.5,  # Penalize vertical movement
-            "base_height": -50.0,
+            "base_height": -30.0,  # Moderate - maintain reasonable height
             "action_rate": -0.05,  # Encourage smooth actions
-            "similar_to_default": -0.2,  # Encourage staying near default pose
-            "upright": 5.0,
-            "tilt_penalty": -2.0,
-            "base_ang_vel": -0.2,
+            "similar_to_default": -0.1,  # Allow deviation for curved walking gait
+            "upright": 3.0,  # Keep upright but allow slight lean into turn
+            "tilt_penalty": -1.0,  # Allow some tilt during curved walking
+            "base_ang_vel": -0.05,  # Small penalty - we WANT angular velocity for turning
         },
     }
     command_cfg = {
         "num_commands": 3,
-        "lin_vel_x_range": [0, 0],  # Forward walking at 0.5 m/s
-        "lin_vel_y_range": [-0.65, -0.65],  # No lateral movement
-        "ang_vel_range": [0, 0],  # No turning
+        # Diagonal walking: 45° towards right (northeast)
+        # Forward (x) and Right (negative y) velocity components
+        "lin_vel_x_range": [0.4, 0.4],  # Forward component at ~45° angle
+        "lin_vel_y_range": [-0.4, -0.4],  # Right component at ~45° angle (negative y = right)
+        "ang_vel_range": [0.0, 0.0],  # No pure rotation - just diagonal walking
     }
 
     return env_cfg, obs_cfg, reward_cfg, command_cfg
@@ -144,7 +150,7 @@ def get_cfgs():
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-e", "--exp_name", type=str, default="q4-back_walking")
+    parser.add_argument("-e", "--exp_name", type=str, default="diagonal_walk")
     parser.add_argument("-v", "--vis", action="store_true", default=False)
     parser.add_argument("-B", "--num_envs", type=int, default=4096)
     parser.add_argument("--max_iterations", type=int, default=201)
@@ -183,12 +189,12 @@ if __name__ == "__main__":
     main()
 
 """
-# training without visualization
-python examples/Q1/q1_train.py
+# training to walk diagonally (45 degrees, combined forward + lateral command)
+python behaviors/diagonal_walk/train.py
 
 # training with visualization (shows first environment only)
-python examples/Q1/q1_train.py -v
+python behaviors/diagonal_walk/train.py -v
 
 # training with fewer environments for debugging
-python examples/Q1/q1_train.py -v -B 8
+python behaviors/diagonal_walk/train.py -v -B 8
 """

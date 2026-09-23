@@ -1,7 +1,14 @@
+import sys
+import pathlib
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
+
 import genesis as gs
 import numpy as np
 import threading
-from pynput import keyboard
+from pynput import keyboard  # optional dependency, not declared in any requirements file — see docs/troubleshooting.md
+
+from behaviors.env import genesis_asset_path
 
 # Keyboard handler
 class KeyboardController:
@@ -51,7 +58,7 @@ plane = scene.add_entity(gs.morphs.Plane())
 # Load Q1 robot from URDF
 robot = scene.add_entity(
     gs.morphs.URDF(
-        file="urdf/q1/kutta.urdf",
+        file=genesis_asset_path("genesis/assets/urdf/q1/kutta.urdf"),
         pos=(0, 0, 0.5),
         quat=(0.7071, -0.7071, 0.0, 0.0),  # 90 degree rotation around X-axis
     ),
